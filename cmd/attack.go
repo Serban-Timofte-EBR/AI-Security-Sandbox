@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Serban-Timofte-EBR/AI-Security-Sandbox/internal/attacks"
+	"github.com/Serban-Timofte-EBR/AI-Security-Sandbox/internal/models"
 	"github.com/spf13/cobra"
 )
 
@@ -19,7 +20,17 @@ var attackCmd = &cobra.Command{
 	Long:  `This command runs an actual adversarial attack on a local AI model by applying controlled input perturbations and measuring the impact.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("[INFO] Starting adversarial attack...")
-		attacks.AdversarialAttack(modelPath, intensity)
+		imageData, err := models.LoadAndPreprocessImage("assets/cat.jpg")
+		if err != nil {
+			fmt.Println("[ERROR] Failed to load image:", err)
+			return
+		}
+
+		err = models.RunResNetInference(modelPath, imageData)
+		if err != nil {
+			fmt.Println("[ERROR] Inference failed:", err)
+			return
+		}
 	},
 }
 
